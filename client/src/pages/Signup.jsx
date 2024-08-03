@@ -24,6 +24,19 @@ export default function Signup() {
           className="border p-3 rounded-lg"
           id="password"
         />
+         <input
+          type="address"
+          placeholder="address"
+          className="border p-3 rounded-lg"
+          id="address"
+        />
+        <input
+          type="phone"
+          placeholder="phone"
+          className="border p-3 rounded-lg"
+          id="phone"
+        />
+
 
         <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
          Sign Up
