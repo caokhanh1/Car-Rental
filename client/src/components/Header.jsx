@@ -33,6 +33,16 @@ export default function Header() {
               About
             </li>
           </Link>
+          <Link to="/service">
+            <li className="hidden sm:inline text-slate-700 hover:underline">
+              Service
+            </li>
+          </Link>
+          <Link to="/cars">
+            <li className="hidden sm:inline text-slate-700 hover:underline">
+              Cars
+            </li>
+          </Link>
 
           <Link to="/sign-in">
             <li className=" text-slate-700 hover:underline">Sign In</li>
