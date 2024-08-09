@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import Google from "../components/Google";
+import { useState } from "react";
 
 export default function SignIn() {
+
+  const [formData, setFormData] = useState({})
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]:e.target.value,
+    })
+  }
+  console.log(formData);
+  
   return (
     <div className="mb-100">
       <div className="p-3 max-w-lg mx-auto">
@@ -13,12 +24,14 @@ export default function SignIn() {
             placeholder="email"
             className="border p-3 rounded-lg"
             id="email"
+            onChange={handleChange}
           />
           <input
             type="password"
             placeholder="password"
             className="border p-3 rounded-lg"
             id="password"
+            onChange={handleChange}
           />
 
           <div className="text-right mt-1">
