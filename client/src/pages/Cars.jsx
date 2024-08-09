@@ -1,8 +1,20 @@
+import CarCard from "../components/CarCard";
+import RentalForm from "../components/RentalForm";
 
-export default function Cars() {
+const Car = () => {
   return (
-    <div>
-      Cars
+    <div className="flex p-8 gap-8">
+      
+     <div><RentalForm /></div>
+        
+      <div className="w-2/3 space-y-4">
+        <CarCard />
+        <CarCard />
+        <CarCard />
+      
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Car;

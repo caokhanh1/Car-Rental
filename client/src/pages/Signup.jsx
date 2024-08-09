@@ -3,22 +3,25 @@ import { Link } from "react-router-dom";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
-  // const handleSubmit = (e) =>{
-  //   e.preventDefault();
-  // }
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+   
+    
+  }
   console.log(formData);
 
   return (
     <div className="p-3 max-w-lg mx-auto mb-100">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
 
-      <form  className="flex flex-col gap-4">
+      <form onClick={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
           placeholder="username"
