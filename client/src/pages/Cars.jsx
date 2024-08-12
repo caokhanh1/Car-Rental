@@ -1,5 +1,5 @@
-import CarCard from "../components/CarCard";
-import RentalForm from "../components/RentalForm";
+import CarCard from "../components/CarComponent/CarCard";
+import RentalForm from "../components/CarComponent/RentalForm";
 
 const Car = () => {
   return (
@@ -11,7 +11,6 @@ const Car = () => {
         <CarCard />
         <CarCard />
         <CarCard />
-      
       </div>
     </div>
   );

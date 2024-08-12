@@ -1,11 +1,16 @@
-import CarOffers from "../components/CarOffers";
-import Slide from "../components/Slide";
+import CarList from "../components/HomeComponent/CarList";
+import Hero from "../components/HomeComponent/Hero";
+import ServiceHome from "../components/HomeComponent/ServiceHome";
+import Testimonial from "../components/HomeComponent/Testimonial";
+
 
 export default function Home() {
   return (
     <div>
-      <Slide />
-      <CarOffers />
+      <Hero />
+      <ServiceHome />
+      <CarList />
+      <Testimonial/>
     </div>
   );
 }
