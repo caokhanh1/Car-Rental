@@ -1,6 +1,7 @@
 import whiteCar from "../../assets/white-car.png";
 import car2 from "../../assets/car5.png";
 import car3 from "../../assets/car6.png";
+import { Link } from "react-router-dom";
 
 const carList = [
   {
@@ -69,15 +70,17 @@ const CarList = () => {
             </div>
           </div>
           {/* End of car listing */}
-          <div className="grid place-items-center mt-8">
-            <button
-              data-aos="fade-up"
-              data-aos-delay="1500"
-              className="rounded-md bg-primary hover:bg-primary/80 transition duration-500 py-2 px-6 text-black"
-            >
-              Get Started
-            </button>
-          </div>
+          <Link to="/cars">
+            <div className="grid place-items-center mt-8">
+              <button
+                data-aos="fade-up"
+                data-aos-delay="1500"
+                className="rounded-md bg-primary hover:bg-primary/80 transition duration-500 py-2 px-6 text-black"
+              >
+                Get Started
+              </button>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

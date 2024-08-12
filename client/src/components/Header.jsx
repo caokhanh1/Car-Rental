@@ -34,7 +34,7 @@ const Header = () => {
                 About
               </li>
             </Link>
-            <Link to="/service">
+            <Link to="/booking">
               <li className="hidden sm:inline text-slate-700 hover:underline">
                 Booking
               </li>
