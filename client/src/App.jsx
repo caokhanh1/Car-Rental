@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Cars from "./pages/Cars";
 import Footer from "./components/Footer";
 import Booking from "./pages/Booking";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/cars" element={<Cars />} />
+  
       </Routes>
       <Footer />
     </BrowserRouter>
