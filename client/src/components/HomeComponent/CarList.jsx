@@ -59,7 +59,11 @@ const CarList = () => {
                     <h1 className="text-primary font-semibold">{data.name}</h1>
                     <div className="flex justify-between items-center text-xl font-semibold">
                       <p>${data.price}/Day</p>
-                      <a href="#">Details</a>
+                      <Link to="/booking">
+                        <button className="border border-yellow-700 text-black py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
+                          Rent Now
+                        </button>
+                      </Link>
                     </div>
                   </div>
                   <p className="text-xl font-semibold absolute top-0 left-3">
