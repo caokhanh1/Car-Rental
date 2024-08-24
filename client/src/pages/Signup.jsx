@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null); // Để lưu trữ lỗi nếu có
-  const [isLoading, setIsLoading] = useState(false); // Để xử lý trạng thái loading
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -15,32 +16,38 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  
-    setIsLoading(true); // Bắt đầu loading
-
+    e.preventDefault();
+    setLoading(true);
+    setError(null); // Reset lỗi trước khi gửi request
     try {
-      // Gửi POST request đến API .NET
-      const response = await axios.post("/api/signup", formData); 
+      // Sử dụng axios để gửi request
+      const res = await axios.post("/api/auth/signup", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      console.log("User registered successfully:", response.data);
-     
+      // Kiểm tra nếu đăng ký thành công
+      if (res.data.success === false) {
+        setError(res.data.message);
+      } else {
+        // Nếu thành công, chuyển hướng người dùng đến trang đăng nhập
+        navigate("/sign-in");
+      }
     } catch (error) {
-      // Xử lý lỗi
-      console.error("There was an error registering the user:", error);
-      setError("There was an error registering the user. Please try again."); 
+      setError(
+        error.response?.data?.message ||
+          "There was an error registering the user."
+      );
     } finally {
-      setIsLoading(false); 
+      setLoading(false);
     }
   };
-
-  console.log(formData);
 
   return (
     <div className="p-3 max-w-lg mx-auto mb-100">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
-
-      {error && <p className="text-red-500">{error}</p>}
-
+      {error && <p className="text-red-500 mt-5">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
@@ -54,6 +61,13 @@ export default function Signup() {
           placeholder="email"
           className="border p-3 rounded-lg"
           id="email"
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          placeholder="fullName"
+          className="border p-3 rounded-lg"
+          id="fullName"
           onChange={handleChange}
         />
         <input
@@ -77,20 +91,17 @@ export default function Signup() {
           id="phone"
           onChange={handleChange}
         />
-
         <button
-          type="submit"
+          disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
-          disabled={isLoading} 
         >
-          {isLoading ? "Signing up..." : "Sign Up"} 
+          {loading ? "Loading..." : "Sign Up"}
         </button>
       </form>
-
       <div className="flex gap-2 mt-5">
         <p>Have an account?</p>
-        <Link to={"/sign-in"}>
-          <span className="text-blue-700">Sign up</span>
+        <Link to="/sign-in">
+          <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
     </div>

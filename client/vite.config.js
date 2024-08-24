@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000", // Địa chỉ của API .NET
+        target: "http://localhost:7104", // Địa chỉ của API .NET
         changeOrigin: true, // Thay đổi nguồn gốc yêu cầu để khớp với `target`
         secure: false, // Bỏ qua kiểm tra SSL nếu cần (chỉ dùng khi phát triển)
       },

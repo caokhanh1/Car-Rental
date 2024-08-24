@@ -1,12 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import Google from "../components/Google";
 import { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
 import axios from "axios"; 
+
 export default function SignIn() {
 
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null); 
-  const [isLoading, setIsLoading] = useState(false); 
+  const { loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({
@@ -16,19 +24,27 @@ export default function SignIn() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
-    setIsLoading(true); 
-
+    e.preventDefault();
     try {
-      // Gửi POST request đến API với await
-      const response = await axios.post("/api/signin", formData); 
-      console.log("User signed in successfully:", response.data);
+      dispatch(signInStart());
+      const res = await axios.post('/api/auth/signin', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = res.data;
+      console.log(data);
+
+      if (!data.success) {
+        dispatch(signInFailure(data.message));
+        return;
+      }
+
+      dispatch(signInSuccess(data));
+      navigate('/');
     } catch (error) {
-      // Xử lý lỗi
-      console.error("There was an error signing in:", error);
-      setError("Invalid email or password. Please try again."); 
-    } finally {
-      setIsLoading(false); 
+      dispatch(signInFailure(error.response?.data?.message || error.message));
     }
   };
 
@@ -36,9 +52,7 @@ export default function SignIn() {
     <div className="mb-100">
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
-
-        {error && <p className="text-red-500">{error}</p>} 
-
+        {error && <p className='text-red-500 mt-5'>{error}</p>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -65,11 +79,10 @@ export default function SignIn() {
           </div>
 
           <button
-            type="submit"
-            className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
-            disabled={isLoading} 
+            disabled={loading}
+            className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {loading ? 'Loading...' : 'Sign In'}
           </button>
           <Google />
         </form>
@@ -81,6 +94,7 @@ export default function SignIn() {
           </Link>
         </div>
       </div>
+     
     </div>
   );
 }
