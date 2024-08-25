@@ -1,16 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import Google from "../components/Google";
 import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from '../redux/user/userSlice';
-import axios from "axios"; 
+} from "../redux/user/userSlice";
+import axios from "axios";
 
 export default function SignIn() {
-
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -27,22 +26,21 @@ export default function SignIn() {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await axios.post('/api/auth/signin', formData, {
+      const { data } = await axios.post(`http://localhost:5130/Authen/login`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
-      const data = res.data;
       console.log(data);
 
-      if (!data.success) {
+      if (data.success === false) {
         dispatch(signInFailure(data.message));
         return;
       }
 
       dispatch(signInSuccess(data));
-      navigate('/');
+      navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.response?.data?.message || error.message));
     }
@@ -52,7 +50,7 @@ export default function SignIn() {
     <div className="mb-100">
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
-        {error && <p className='text-red-500 mt-5'>{error}</p>}
+        {error && <p className="text-red-500 mt-5">{error}</p>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -80,9 +78,9 @@ export default function SignIn() {
 
           <button
             disabled={loading}
-            className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
+            className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           >
-            {loading ? 'Loading...' : 'Sign In'}
+            {loading ? "Loading..." : "Sign In"}
           </button>
           <Google />
         </form>
@@ -94,7 +92,6 @@ export default function SignIn() {
           </Link>
         </div>
       </div>
-     
     </div>
   );
 }

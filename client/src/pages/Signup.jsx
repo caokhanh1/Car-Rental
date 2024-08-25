@@ -17,32 +17,53 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null); // Reset lỗi trước khi gửi request
     try {
-      // Sử dụng axios để gửi request
-      const res = await axios.post("/api/auth/signup", formData, {
+      setLoading(true);
+      const res = await axios.post(`http://localhost:5130/Authen/register`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      // Kiểm tra nếu đăng ký thành công
+      
+      console.log(res.data);
       if (res.data.success === false) {
         setError(res.data.message);
       } else {
-        // Nếu thành công, chuyển hướng người dùng đến trang đăng nhập
-        navigate("/sign-in");
+        navigate("/sign-in", {
+          state: {
+            startPath: "register",
+          },
+        });
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "There was an error registering the user."
-      );
+      setError(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
   };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+  //   axios({
+  //     method: "post",
+  //     url: `http://localhost:5130/Authen/register`,
+  //     data: formData,
+  //   })
+  //     .then(() => {
+  //       console.log("Đăng ký tài khoản thành công!");
+  //       setTimeout(() => {
+  //         navigate("/sign-in", {
+  //           state: {
+  //             startPath: "register",
+  //           },
+  //         });
+  //       }, 1000);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   return (
     <div className="p-3 max-w-lg mx-auto mb-100">
