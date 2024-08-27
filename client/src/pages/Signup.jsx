@@ -19,12 +19,14 @@ export default function Signup() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await axios.post(`http://localhost:5130/Authen/register`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      
+      const res = await axios.post(`http://localhost:5130/Authen/register`,formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       console.log(res.data);
       if (res.data.success === false) {
         setError(res.data.message);
@@ -85,7 +87,7 @@ export default function Signup() {
           onChange={handleChange}
         />
         <input
-          type="text"
+          type="name"
           placeholder="fullName"
           className="border p-3 rounded-lg"
           id="fullName"
@@ -99,7 +101,7 @@ export default function Signup() {
           onChange={handleChange}
         />
         <input
-          type="text"
+          type="address"
           placeholder="address"
           className="border p-3 rounded-lg"
           id="address"
