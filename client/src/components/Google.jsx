@@ -15,7 +15,7 @@ export default function Google() {
       const id_token = googleUser.getAuthResponse().id_token;
 
       try {
-        // Gửi mã token đến backend
+       
         const { data } = await axios.post(
           `http://localhost:5130/Authen/signin-google`,
           {
