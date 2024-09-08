@@ -25,9 +25,8 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/register-car" element={<CarRentalRegistration />} />
         </Route>
-
+        
         <Route path="/booking" element={<Booking />} />
-
         <Route path="/cars" element={<Cars />} />
       </Routes>
       <Footer />
