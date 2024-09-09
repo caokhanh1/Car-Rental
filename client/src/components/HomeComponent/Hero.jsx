@@ -1,5 +1,5 @@
 
-import yellowCar from "../../assets/banner-car.png";
+import carIcon from "../../assets/car-icon.png";
 const Hero = () => {
   return (
     <div>
@@ -13,7 +13,7 @@ const Hero = () => {
               className="order-1 sm:order-2"
             >
               <img
-                src={yellowCar}
+                src={carIcon}
                 alt=""
                 className="sm:scale-125 relative -z-10 max-h-[600px] drop-shadow-[2px_20px_6px_rgba(0,0,0,0.50)]"
               />

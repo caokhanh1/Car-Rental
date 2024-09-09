@@ -87,7 +87,7 @@ export default function Signup() {
           onChange={handleChange}
         />
         <input
-          type="name"
+          type="text"
           placeholder="fullName"
           className="border p-3 rounded-lg"
           id="fullName"
@@ -101,7 +101,7 @@ export default function Signup() {
           onChange={handleChange}
         />
         <input
-          type="address"
+          type="text"
           placeholder="address"
           className="border p-3 rounded-lg"
           id="address"

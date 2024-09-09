@@ -1,61 +1,65 @@
-import { FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { FaCarCrash } from "react-icons/fa";
+import { FaSun } from "react-icons/fa";
+import { AiOutlineSearch } from "react-icons/ai";
+import { Button, Navbar, TextInput } from "flowbite-react";
 import { useSelector } from "react-redux";
-const Header = () => {
+export default function Header() {
+  const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
   return (
-    <div>
-      <header className="bg-slate-200 shadow-md">
-        <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
-          <Link to="/">
-            <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-              <span className="text-slate-500">Car</span>
-              <span className="text-slate-700">Rental</span>
-            </h1>
-          </Link>
-
-          <form className="bg-slate-100 p-3 rounded-lg flex items-center">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent focus:outline-none w-24 sm:w-64"
-            />
-
-            <FaSearch className="text-slate-600" />
-          </form>
-
-          <ul className="flex gap-4">
-            <Link to="/">
-              <li className="hidden sm:inline text-slate-700 hover:underline">
-                Home
-              </li>
-            </Link>
-            <Link to="/about">
-              <li className="hidden sm:inline text-slate-700 hover:underline">
-                About
-              </li>
-            </Link>
-            <Link to="/cars">
-              <li className="hidden sm:inline text-slate-700 hover:underline">
-                Cars
-              </li>
-            </Link>
-            <Link to="/profile">
-              {currentUser ? (
-                <img
-                  className="rounded-full h-7 w-7 object-cover"
-                  src={currentUser.avatar}
-                  alt="profile"
-                />
-              ) : (
-                <li className=" text-slate-700 hover:underline"> Sign in</li>
-              )}
-            </Link>
-          </ul>
+    <Navbar className="border-b-2 bg-slate-200 shadow-md p-3">
+      <Link
+        to="/"
+        className="self-center text-sm sm:text-xl font-semibold dark:text-white"
+      >
+        <div className="text-2xl flex items-center gap-2 font-bold font-averia uppercase">
+          <span className="text-slate-500">Car</span>
+          <span className="text-slate-700">Rental</span>
+          <FaCarCrash className="text-yellow-500" />
         </div>
-      </header>
-    </div>
-  );
-};
+      </Link>
 
-export default Header;
+      <form>
+        <TextInput
+          type="text"
+          placeholder="Search..."
+          rightIcon={AiOutlineSearch}
+          className="hidden lg:inline"
+        />
+      </form>
+      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
+        <AiOutlineSearch />
+      </Button>
+
+      <div className="flex gap-2 md:order-2">
+        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
+          <FaSun />
+        </Button>
+        <Link to="/profile">
+          {currentUser ? (
+            <img
+              className="rounded-full h-7 w-7 object-cover"
+              src={currentUser.avatar || "https://github.com/shadcn.png"}
+              alt="profile"
+            />
+          ) : (
+            <Button gradientDuoTone="pinkToOrange">Sign In</Button>
+          )}
+        </Link>
+        <Navbar.Toggle />
+      </div>
+      <Navbar.Collapse>
+        <Navbar.Link active={path === "/"} as={"div"}>
+          <Link to="/">Home</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/about"} as={"div"}>
+          <Link to="/about">About</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/cars"} as={"div"}>
+          <Link to="/cars">Car</Link>
+        </Navbar.Link>
+      </Navbar.Collapse>
+    </Navbar>
+  );
+}
