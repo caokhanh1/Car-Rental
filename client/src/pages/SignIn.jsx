@@ -8,7 +8,7 @@ import {
   signInFailure,
 } from "../redux/user/userSlice";
 import axios from "axios";
-
+import { Label, TextInput } from 'flowbite-react';
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
@@ -52,20 +52,24 @@ export default function SignIn() {
         <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
         {error && <p className="text-red-500 mt-5">{error}</p>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="email"
-            className="border p-3 rounded-lg"
-            id="email"
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            placeholder="password"
-            className="border p-3 rounded-lg"
-            id="password"
-            onChange={handleChange}
-          />
+        <div>
+              <Label value='Your email' />
+              <TextInput
+                type='email'
+                placeholder='name@company.com'
+                id='email'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your password' />
+              <TextInput
+                type='password'
+                placeholder='**********'
+                id='password'
+                onChange={handleChange}
+              />
+            </div>
 
           <div className="text-right mt-1">
             <Link

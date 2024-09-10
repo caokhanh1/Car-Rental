@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { Label, TextInput } from "flowbite-react";
 export default function Signup() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -19,7 +19,9 @@ export default function Signup() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await axios.post(`http://localhost:5130/Authen/register`,formData,
+      const res = await axios.post(
+        `http://localhost:5130/Authen/register`,
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -72,48 +74,61 @@ export default function Signup() {
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
       {error && <p className="text-red-500 mt-5">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          placeholder="username"
-          className="border p-3 rounded-lg"
-          id="username"
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          placeholder="email"
-          className="border p-3 rounded-lg"
-          id="email"
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          placeholder="fullName"
-          className="border p-3 rounded-lg"
-          id="fullName"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          className="border p-3 rounded-lg"
-          id="password"
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          placeholder="address"
-          className="border p-3 rounded-lg"
-          id="address"
-          onChange={handleChange}
-        />
-        <input
-          type="tel"
-          placeholder="phone"
-          className="border p-3 rounded-lg"
-          id="phone"
-          onChange={handleChange}
-        />
+        <div>
+          <Label value="Your username" />
+          <TextInput
+            type="text"
+            placeholder="Username"
+            id="username"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label value="Your email" />
+          <TextInput
+            type="email"
+            placeholder="name@company.com"
+            id="email"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label value="Your password" />
+          <TextInput
+            type="text"
+            placeholder="fullName"
+            id="fullName"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <Label value="Full Name" />
+          <TextInput
+            type="password"
+            placeholder="Password"
+            id="password"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label value="Address" />
+          <TextInput
+            type="text"
+            placeholder="address"
+            id="address"
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label value="Phone" />
+          <TextInput
+            type="tel"
+            placeholder="phone"
+            id="phone"
+            onChange={handleChange}
+          />
+        </div>
         <button
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
