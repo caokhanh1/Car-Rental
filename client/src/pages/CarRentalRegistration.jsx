@@ -34,7 +34,7 @@ const CarRentalRegistration = () => {
     // });
   };
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
+    if (e.target.id === "rent") {
       setFormData({
         ...formData,
         type: e.target.id,
@@ -109,15 +109,6 @@ const CarRentalRegistration = () => {
             <div className="flex gap-2">
               <input
                 type="checkbox"
-                id="sale"
-                className="w-5"
-                onChange={handleChange}
-              />
-              <span>Sell</span>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
                 id="rent"
                 className="w-5"
                 onChange={handleChange}
@@ -183,7 +174,7 @@ const CarRentalRegistration = () => {
           <div className="flex gap-4">
             <input
               onChange={(e) => setFiles(e.target.files)}
-              className="p-3 border border-gray-300 rounded w-full"
+              className=" border border-gray-300 rounded w-full"
               type="file"
               id="images"
               accept="image/*"
@@ -193,7 +184,7 @@ const CarRentalRegistration = () => {
               type="button"
               disabled={uploading}
               onClick={handleImageSubmit}
-              className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
+              className="p-2 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
             >
               {uploading ? "Uploading..." : "Upload"}
             </button>

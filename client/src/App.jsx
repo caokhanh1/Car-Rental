@@ -23,9 +23,9 @@ export default function App() {
 
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
-          <Route path="/register-car" element={<CarRentalRegistration />} />
+         
         </Route>
-        
+        <Route path="/register-car" element={<CarRentalRegistration />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/cars" element={<Cars />} />
       </Routes>

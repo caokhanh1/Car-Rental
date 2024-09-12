@@ -10,12 +10,9 @@ export default function Google() {
 
   const handleGoogleClick = async () => {
     const GoogleAuth = gapi.auth2.getAuthInstance();
-
     GoogleAuth.signIn().then(async (googleUser) => {
       const id_token = googleUser.getAuthResponse().id_token;
-
-      try {
-       
+      try { 
         const { data } = await axios.post(
           `http://localhost:5130/Authen/signin-google`,
           {
