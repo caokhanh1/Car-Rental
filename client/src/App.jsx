@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import Booking from "./pages/Booking";
 import PrivateRoute from "./components/PrivateRoute";
 import CarRentalRegistration from "./pages/CarRentalRegistration";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -22,9 +23,10 @@ export default function App() {
         <Route path="/about" element={<About />} />
 
         <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
          
         </Route>
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register-car" element={<CarRentalRegistration />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/cars" element={<Cars />} />

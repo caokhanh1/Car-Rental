@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Label, TextInput } from "flowbite-react";
+
 export default function Signup() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -45,29 +46,6 @@ export default function Signup() {
       setLoading(false);
     }
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError(null);
-  //   axios({
-  //     method: "post",
-  //     url: `http://localhost:5130/Authen/register`,
-  //     data: formData,
-  //   })
-  //     .then(() => {
-  //       console.log("Đăng ký tài khoản thành công!");
-  //       setTimeout(() => {
-  //         navigate("/sign-in", {
-  //           state: {
-  //             startPath: "register",
-  //           },
-  //         });
-  //       }, 1000);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
 
   return (
     <div className="p-3 max-w-lg mx-auto mb-100">
@@ -75,19 +53,10 @@ export default function Signup() {
       {error && <p className="text-red-500 mt-5">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <Label value="Your username" />
-          <TextInput
-            type="text"
-            placeholder="Username"
-            id="username"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
           <Label value="Your email" />
           <TextInput
             type="email"
-            placeholder="name@company.com"
+            placeholder="name@gmail.com"
             id="email"
             onChange={handleChange}
           />
@@ -95,9 +64,9 @@ export default function Signup() {
         <div>
           <Label value="Your password" />
           <TextInput
-            type="text"
-            placeholder="fullName"
-            id="fullName"
+            type="password"
+            placeholder="Password"
+            id="password"
             onChange={handleChange}
           />
         </div>
@@ -105,9 +74,9 @@ export default function Signup() {
         <div>
           <Label value="Full Name" />
           <TextInput
-            type="password"
-            placeholder="Password"
-            id="password"
+            type="text"
+            placeholder="Full Name"
+            id="fullName"
             onChange={handleChange}
           />
         </div>
@@ -115,7 +84,7 @@ export default function Signup() {
           <Label value="Address" />
           <TextInput
             type="text"
-            placeholder="address"
+            placeholder="Address"
             id="address"
             onChange={handleChange}
           />
@@ -124,7 +93,7 @@ export default function Signup() {
           <Label value="Phone" />
           <TextInput
             type="tel"
-            placeholder="phone"
+            placeholder="Phone"
             id="phone"
             onChange={handleChange}
           />

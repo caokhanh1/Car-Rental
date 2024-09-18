@@ -40,7 +40,6 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-
       const response = await axios.post(
         `http://localhost:5130/user/update/${currentUser._id}`,
         formData,
@@ -87,19 +86,6 @@ export default function Profile() {
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {/* <input
-          onChange={(e) => setFile(e.target.files[0])}
-          type="file"
-          ref={fileRef}
-          hidden
-          accept="image/*"
-        />
-        <img
-          onClick={() => fileRef.current.click()}
-          src=""
-          alt="profile"
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-        /> */}
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type='file'
@@ -113,19 +99,7 @@ export default function Profile() {
           alt='profile'
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
         />
-        {/* <p className='text-sm self-center'>
-          {fileUploadError ? (
-            <span className='text-red-700'>
-              Error Image upload (image must be less than 2 mb)
-            </span>
-          ) : filePerc > 0 && filePerc < 100 ? (
-            <span className='text-slate-700'>{`Uploading ${filePerc}%`}</span>
-          ) : filePerc === 100 ? (
-            <span className='text-green-700'>Image successfully uploaded!</span>
-          ) : (
-            ''
-          )}
-        </p> */}
+       
         <input
           type="text"
           placeholder="username"

@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { FaCarCrash } from "react-icons/fa";
-import { FaSun } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Button, Navbar, TextInput } from "flowbite-react";
 import { useSelector } from "react-redux";
@@ -33,9 +32,6 @@ export default function Header() {
       </Button>
 
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
-          <FaSun />
-        </Button>
         <Link to="/profile">
           {currentUser ? (
             <img
@@ -47,7 +43,6 @@ export default function Header() {
             <Button gradientDuoTone="pinkToOrange">Sign In</Button>
           )}
         </Link>
-        <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
