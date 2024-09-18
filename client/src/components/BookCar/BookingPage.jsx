@@ -7,28 +7,7 @@ const BookingPage = () => {
       <div className="flex flex-col lg:flex-row lg:space-x-8">
         <div className="flex-1">
           <img src={car1} alt="Car" className="w-full h-auto rounded-lg mb-4" />
-          <div className="flex space-x-2">
-            <img
-              src={car5}
-              alt="Car Thumbnail"
-              className="w-1/5 h-auto rounded-lg cursor-pointer"
-            />
-            <img
-              src={car6}
-              alt="Car Thumbnail"
-              className="w-1/5 h-auto rounded-lg cursor-pointer"
-            />
-            <img
-              src={car6}
-              alt="Car Thumbnail"
-              className="w-1/5 h-auto rounded-lg cursor-pointer"
-            />
-            <img
-              src={car6}
-              alt="Car Thumbnail"
-              className="w-1/5 h-auto rounded-lg cursor-pointer"
-            />
-          </div>
+          
         </div>
 
         {/* Booking Form */}
