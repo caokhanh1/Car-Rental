@@ -1,6 +1,5 @@
 import car1 from "../../assets/car1.png";
-import car5 from "../../assets/car5.png";
-import car6 from "../../assets/car6.png";
+
 const BookingPage = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 mt-10">
