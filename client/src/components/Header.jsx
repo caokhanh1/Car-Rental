@@ -2,10 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { FaCarCrash } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Button, Navbar, TextInput } from "flowbite-react";
-import { useSelector } from "react-redux";
+
 export default function Header() {
   const path = useLocation().pathname;
-  const { currentUser } = useSelector((state) => state.user);
+
+  // Lấy thông tin người dùng từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
   return (
     <Navbar className="border-b-2 bg-slate-200 shadow-md p-3">
       <Link
