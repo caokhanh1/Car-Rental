@@ -11,6 +11,8 @@ import Booking from "./pages/Booking";
 import PrivateRoute from "./components/PrivateRoute";
 import CarRentalRegistration from "./pages/CarRentalRegistration";
 import Dashboard from "./pages/Dashboard";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 export default function App() {
   return (
@@ -21,11 +23,12 @@ export default function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/about" element={<About />} />
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route element={<PrivateRoute />}>
         <Route path="/profile" element={<Profile />} />
          
         </Route>
+        <Route path="/reset" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register-car" element={<CarRentalRegistration />} />
         <Route path="/booking" element={<Booking />} />

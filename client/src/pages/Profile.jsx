@@ -1,24 +1,18 @@
-import { useRef, useState,useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
-import {
-  updateUserStart,
-  updateUserSuccess,
-  updateUserFailure,
-  deleteUserFailure,
-  deleteUserSuccess,
-  signOutUserStart,
-} from "../redux/user/userSlice";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(undefined);
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const dispatch = useDispatch();
- 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  // Lấy thông tin người dùng từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
     if (file) {
@@ -26,9 +20,35 @@ export default function Profile() {
     }
   }, [file]);
 
-  const handleFileUpload = () => {
-   
+
+  const handleFileUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const { data } = await axios.post(
+        `http://localhost:5130/user/upload-avatar/${currentUser._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Cập nhật avatar sau khi upload thành công
+      if (data.success) {
+        const updatedUser = { ...currentUser, avatar: data.avatar };
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+        setFormData({ ...formData, avatar: data.avatar });
+      } else {
+        setError("Failed to upload avatar");
+      }
+    } catch (err) {
+      setError("Upload failed");
+    }
   };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -38,8 +58,10 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+
     try {
-      dispatch(updateUserStart());
       const response = await axios.post(
         `http://localhost:5130/user/update/${currentUser._id}`,
         formData,
@@ -53,33 +75,25 @@ export default function Profile() {
       const data = response.data;
 
       if (!data.success) {
-        dispatch(updateUserFailure(data.message));
+        setError(data.message);
+        setLoading(false);
         return;
       }
 
-      dispatch(updateUserSuccess(data));
+      // Cập nhật thông tin người dùng và lưu vào localStorage
+      const updatedUser = { ...currentUser, ...formData };
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
       setUpdateSuccess(true);
-    } catch (error) {
-      dispatch(
-        updateUserFailure(error.response?.data?.message || "Update failed")
-      );
+      setLoading(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Update failed");
+      setLoading(false);
     }
   };
-  const handleSignOut = async () => {
-    try {
-      dispatch(signOutUserStart());
-      const res = await axios.post(`http://localhost:5130/Authen/signout`);
-      const data = res.data;
 
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-        return;
-      }
-
-      dispatch(deleteUserSuccess(data));
-    } catch (error) {
-      dispatch(deleteUserFailure(error.message || "Sign out failed"));
-    }
+  const handleSignOut = () => {
+    localStorage.removeItem("currentUser");
+    navigate("/sign-in");
   };
 
   return (
@@ -88,18 +102,18 @@ export default function Profile() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           onChange={(e) => setFile(e.target.files[0])}
-          type='file'
+          type="file"
           ref={fileRef}
           hidden
-          accept='image/*'
+          accept="image/*"
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={formData.avatar || currentUser.avatar||"https://via.placeholder.com/150"}
-          alt='profile'
-          className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
+          src={formData.avatar || currentUser.avatar || "https://via.placeholder.com/150"}
+          alt="profile"
+          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
-       
+
         <input
           type="text"
           placeholder="username"
@@ -125,7 +139,7 @@ export default function Profile() {
           onChange={handleChange}
         />
         <input
-          type="address"
+          type="text"
           placeholder="address"
           defaultValue={currentUser.address}
           id="address"
@@ -133,7 +147,7 @@ export default function Profile() {
           onChange={handleChange}
         />
         <input
-          type="phone"
+          type="tel"
           placeholder="phone"
           defaultValue={currentUser.phone}
           id="phone"
@@ -147,8 +161,8 @@ export default function Profile() {
           {loading ? "Loading..." : "Update"}
         </button>
         <Link
-          className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'
-          to={'/register-car'}
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={"/register-car"}
         >
           Create Listing
         </Link>
@@ -158,10 +172,8 @@ export default function Profile() {
           Sign out
         </span>
       </div>
-      <p className="text-red-700 mt-5">{error ? error : ""}</p>
-      <p className="text-green-700 mt-5">
-        {updateSuccess ? "User is updated successfully!" : ""}
-      </p>
+      {error && <p className="text-red-700 mt-5">{error}</p>}
+      {updateSuccess && <p className="text-green-700 mt-5">User is updated successfully!</p>}
     </div>
   );
 }

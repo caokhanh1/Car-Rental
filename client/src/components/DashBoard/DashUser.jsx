@@ -1,121 +1,180 @@
-import { Modal, Table, Button } from "flowbite-react";
 import { useState } from "react";
-import { HiOutlineExclamationCircle, HiOutlineSearch } from "react-icons/hi";
 
+const data = [
+  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Administrator', status: 'Active' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Editor', status: 'Inactive' },
+  { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'Subscriber', status: 'Active' },
+  { id: 4, name: 'Emily Davis', email: 'emily@example.com', role: 'Contributor', status: 'Active' },
+  { id: 5, name: 'William Brown', email: 'william@example.com', role: 'Subscriber', status: 'Inactive' },
+  // Add more data as needed
+];
 export default function DashUsers() {
   // Sample user data (5 users)
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      dateCreated: "2023-09-01",
-      userImage: "https://via.placeholder.com/40",
-      username: "john_doe",
-      email: "john@example.com",
-    },
-    {
-      id: 2,
-      dateCreated: "2023-09-02",
-      userImage: "https://via.placeholder.com/40",
-      username: "jane_smith",
-      email: "jane@example.com",
-    },
-    {
-      id: 3,
-      dateCreated: "2023-09-03",
-      userImage: "https://via.placeholder.com/40",
-      username: "samuel_lee",
-      email: "samuel@example.com",
-    },
-    {
-      id: 4,
-      dateCreated: "2023-09-04",
-      userImage: "https://via.placeholder.com/40",
-      username: "alice_wong",
-      email: "alice@example.com",
-    },
-    {
-      id: 5,
-      dateCreated: "2023-09-05",
-      userImage: "https://via.placeholder.com/40",
-      username: "bob_jones",
-      email: "bob@example.com",
-    },
-  ]);
+  // const [users, setUsers] = useState([
+  //   {
+  //     id: 1,
+  //     dateCreated: "2023-09-01",
+  //     userImage: "https://via.placeholder.com/40",
+  //     username: "john_doe",
+  //     email: "john@example.com",
+  //   },
+  //   {
+  //     id: 2,
+  //     dateCreated: "2023-09-02",
+  //     userImage: "https://via.placeholder.com/40",
+  //     username: "jane_smith",
+  //     email: "jane@example.com",
+  //   },
+  //   {
+  //     id: 3,
+  //     dateCreated: "2023-09-03",
+  //     userImage: "https://via.placeholder.com/40",
+  //     username: "samuel_lee",
+  //     email: "samuel@example.com",
+  //   },
+  //   {
+  //     id: 4,
+  //     dateCreated: "2023-09-04",
+  //     userImage: "https://via.placeholder.com/40",
+  //     username: "alice_wong",
+  //     email: "alice@example.com",
+  //   },
+  //   {
+  //     id: 5,
+  //     dateCreated: "2023-09-05",
+  //     userImage: "https://via.placeholder.com/40",
+  //     username: "bob_jones",
+  //     email: "bob@example.com",
+  //   },
+  // ]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-
-  // Function to handle delete click
-  const handleDeleteClick = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    // Perform delete action here
-    setUsers(users.filter((user) => user.id !== selectedUser.id));
-    setShowModal(false);
-    setSelectedUser(null);
-  };
-
+  // Filter data based on search term
+  const filteredData = data.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
-    <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      <Table hoverable className="shadow-md">
-        <Table.Head>
-          <Table.HeadCell>Date created</Table.HeadCell>
-          <Table.HeadCell>User image</Table.HeadCell>
-          <Table.HeadCell>Username</Table.HeadCell>
-          <Table.HeadCell>Email</Table.HeadCell>
-          <Table.HeadCell>Delete</Table.HeadCell>
-        </Table.Head>
-        <Table.Body className="divide-y">
-          {users.map((user) => (
-            <Table.Row
-              className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              key={user.id}
-            >
-              <Table.Cell>{user.dateCreated}</Table.Cell>
-              <Table.Cell>
-                <img
-                  src={user.userImage}
-                  alt={user.username}
-                  className="w-10 h-10 object-cover bg-gray-500 rounded-full"
-                />
-              </Table.Cell>
-              <Table.Cell>{user.username}</Table.Cell>
-              <Table.Cell>{user.email}</Table.Cell>
-              <Table.Cell>
-                <span
-                  className="font-medium text-red-500 hover:underline cursor-pointer"
-                  onClick={() => handleDeleteClick(user)}
-                >
-                  Delete
-                </span>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
-
-      <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Header>Delete User</Modal.Header>
-        <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete {selectedUser?.username}?
-            </h3>
-            <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleConfirmDelete}>
-                Yes, Im sure
-              </Button>
-              <Button color="gray" onClick={() => setShowModal(false)}>
-                No, cancel
-              </Button>
+    <div className="container mx-auto px-4 sm:px-8 mt-6">
+      <div className="py-8">
+        {/* Table Header */}
+        <div className="flex justify-between mb-4">
+          <h2 className="text-2xl font-semibold leading-tight">User Statistics</h2>
+          {/* Optional: Add Search or Filters Here */}
+          <input
+            type="text"
+            placeholder="Search..."
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        {/* Table */}
+        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+          <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+            <table className="min-w-full leading-normal">
+              <thead>
+                <tr>
+                  {/* Table Headers */}
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    ID
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    Email
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    Role
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Table Rows */}
+                {data.map((user) => (
+                  <tr key={user.id}>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">{user.id}</p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">{user.name}</p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">{user.email}</p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                        <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                        <span className="relative">{user.role}</span>
+                      </span>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {user.status === 'Active' ? (
+                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                          <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                          <span className="relative">{user.status}</span>
+                        </span>
+                      ) : (
+                        <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
+                          <span aria-hidden="true" className="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
+                          <span className="relative">{user.status}</span>
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-2">Edit</button>
+                      <button className="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+                {/* Add more rows as needed */}
+              </tbody>
+            </table>
+            {/* Pagination */}
+            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+              <span className="text-xs xs:text-sm text-gray-900">
+                Showing {1} to {data.length} of {data.length} Entries
+              </span>
+              <div className="inline-flex mt-2 xs:mt-0">
+                <button className="text-sm text-indigo-50 bg-indigo-600 px-4 py-2 rounded-l hover:bg-indigo-700">
+                  Prev
+                </button>
+                <button className="text-sm text-indigo-600 bg-indigo-100 px-4 py-2 hover:bg-indigo-200">
+                  Next
+                </button>
+              </div>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </div>
+      </div>
     </div>
   );
 }
