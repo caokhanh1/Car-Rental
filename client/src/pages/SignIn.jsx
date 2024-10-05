@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import Google from "../components/Google";
 import { useState } from "react";
 import axios from "axios";
 import { Label, TextInput } from 'flowbite-react';
+import { GoogleLogin } from '@react-oauth/google'; // Import GoogleLogin component
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -47,6 +47,38 @@ export default function SignIn() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential; 
+
+    try {
+        // Gọi API backend để xử lý token Google
+        const res = await axios.post("http://localhost:5130/Authen/signin-google", {
+            token,
+        });
+
+        const data = res.data;
+
+        if (data.success) {
+            // Lưu thông tin người dùng vào localStorage
+            localStorage.setItem("currentUser", JSON.stringify(data.user));
+
+          console.log("success");
+          
+            navigate("/");
+        } else {
+            alert(data.message); // Xử lý thông báo lỗi
+        }
+    } catch (error) {
+        console.error("Google login failed", error);
+        alert("Error logging in with Google");
+    }
+};
+
+  const handleGoogleError = (error) => {
+    console.error("Google login error:", error);
+    alert("Error logging in with Google");
+  };
+
   return (
     <div className="mb-100">
       <div className="p-3 max-w-lg mx-auto">
@@ -84,7 +116,12 @@ export default function SignIn() {
           >
             {loading ? "Loading..." : "Sign In"}
           </button>
-          <Google />
+
+          {/* Component Google Login */}
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+          />
         </form>
 
         <div className="flex gap-2 mt-5">

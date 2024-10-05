@@ -50,13 +50,13 @@ export default function DashUsers() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Filter data based on search term
-  const filteredData = data.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.status.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredData = data.filter(
+  //   (user) =>
+  //     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.status.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   return (
     <div className="container mx-auto px-4 sm:px-8 mt-6">
       <div className="py-8">
