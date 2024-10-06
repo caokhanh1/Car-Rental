@@ -187,9 +187,10 @@
 //     </div>
 //   );
 // }
+// src/components/DashComments.js
 import { useState } from "react";
 import { Modal, Button } from "flowbite-react";
-import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { HiOutlineExclamationCircle, HiTrash } from "react-icons/hi";
 
 const initialComments = [
   { id: 1, updatedAt: '2024-09-24', content: 'Great service!', numberOfLikes: 23, postId: 'post1', userId: 'user1' },
@@ -202,13 +203,26 @@ const initialComments = [
   { id: 8, updatedAt: '2024-09-17', content: 'Cars are in great condition!', numberOfLikes: 25, postId: 'post8', userId: 'user8' },
   { id: 9, updatedAt: '2024-09-16', content: 'Will definitely rent again.', numberOfLikes: 18, postId: 'post9', userId: 'user9' },
   { id: 10, updatedAt: '2024-09-15', content: 'Overall a good experience.', numberOfLikes: 22, postId: 'post10', userId: 'user10' },
+  // Thêm dữ liệu mẫu khác nếu cần
 ];
 
-export default function DashComments() {
+const DashComments = () => {
   const [comments, setComments] = useState(initialComments);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [commentIdToDelete, setCommentIdToDelete] = useState("");
+
+  // Phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 5;
+
+  // Tính tổng số trang
+  // const totalPages = Math.ceil(comments.length / commentsPerPage);
+
+  // Lấy các bình luận của trang hiện tại
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  // const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
 
   // Lọc dữ liệu dựa trên searchTerm
   const filteredComments = comments.filter(
@@ -218,12 +232,26 @@ export default function DashComments() {
       comment.userId.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Xử lý xóa comment (chỉ mô phỏng)
+  // Tính tổng số trang sau khi lọc
+  const filteredTotalPages = Math.ceil(filteredComments.length / commentsPerPage);
+
+  // Lấy bình luận của trang hiện tại sau khi lọc
+  const displayedComments = filteredComments.slice(indexOfFirstComment, indexOfLastComment);
+
+  // Xử lý chuyển trang
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Xử lý xóa comment
   const handleDeleteComment = () => {
     setComments((prevComments) =>
       prevComments.filter((comment) => comment.id !== commentIdToDelete)
     );
     setShowModal(false);
+
+    // Nếu xóa một comment khiến số trang giảm, cập nhật currentPage nếu cần
+    if (filteredComments.length % commentsPerPage === 1 && currentPage === filteredTotalPages && currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   return (
@@ -234,10 +262,13 @@ export default function DashComments() {
           <h2 className="text-2xl font-semibold leading-tight">Comments</h2>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search by content, Post ID, or User ID..."
             className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset về trang đầu khi tìm kiếm
+            }}
           />
         </div>
 
@@ -273,7 +304,7 @@ export default function DashComments() {
               </thead>
               <tbody>
                 {/* Dòng dữ liệu */}
-                {filteredComments.map((comment) => (
+                {displayedComments.map((comment) => (
                   <tr key={comment.id}>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">{comment.id}</p>
@@ -299,26 +330,68 @@ export default function DashComments() {
                           setShowModal(true);
                           setCommentIdToDelete(comment.id);
                         }}
-                        className="text-red-600 hover:text-red-900 mr-2"
+                        className="text-red-600 hover:text-red-900 flex items-center"
                       >
-                        Delete
+                        <HiTrash className="mr-1" /> Delete
                       </button>
                     </td>
                   </tr>
                 ))}
+                {/* Thông báo khi không có dữ liệu */}
+                {displayedComments.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                      No comments found matching your criteria.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
 
-            {/* Phần phân trang - Tùy chọn */}
-            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-              <span className="text-xs xs:text-sm text-gray-900">
-                Showing {filteredComments.length > 0 ? 1 : 0} to {filteredComments.length} of {filteredComments.length} Entries
+            {/* Phần phân trang */}
+            <div className="px-5 py-5 bg-white border-t flex flex-col sm:flex-row items-center sm:justify-between">
+              <span className="text-xs sm:text-sm text-gray-900">
+                Showing {filteredComments.length > 0 ? indexOfFirstComment + 1 : 0} to {Math.min(indexOfLastComment, filteredComments.length)} of {filteredComments.length} Entries
               </span>
-              <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm text-indigo-50 bg-indigo-600 px-4 py-2 rounded-l hover:bg-indigo-700">
+              <div className="inline-flex mt-2 sm:mt-0">
+                {/* Nút Prev */}
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`text-sm px-4 py-2 rounded-l border ${
+                    currentPage === 1
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                  }`}
+                >
                   Prev
                 </button>
-                <button className="text-sm text-indigo-600 bg-indigo-100 px-4 py-2 hover:bg-indigo-200">
+
+                {/* Các nút số trang */}
+                {[...Array(filteredTotalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => paginate(index + 1)}
+                    className={`text-sm px-4 py-2 border-t border-b border-gray-200 ${
+                      currentPage === index + 1
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                {/* Nút Next */}
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === filteredTotalPages || filteredTotalPages === 0}
+                  className={`text-sm px-4 py-2 rounded-r border ${
+                    currentPage === filteredTotalPages || filteredTotalPages === 0
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                  }`}
+                >
                   Next
                 </button>
               </div>
@@ -343,7 +416,7 @@ export default function DashComments() {
             </h3>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={handleDeleteComment}>
-                Yes, I m sure
+                Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
                 No, cancel
@@ -356,3 +429,4 @@ export default function DashComments() {
   );
 }
 
+export default DashComments;
