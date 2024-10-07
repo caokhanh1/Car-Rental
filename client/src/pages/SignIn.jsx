@@ -51,9 +51,9 @@ export default function SignIn() {
     const token = credentialResponse.credential; 
 
     try {
-        // Gọi API backend để xử lý token Google
+        // Gửi token Google lên server để xác thực
         const res = await axios.post("http://localhost:5130/Authen/signin-google", {
-            token,
+            token,  // Send token to backend
         });
 
         const data = res.data;
@@ -61,9 +61,7 @@ export default function SignIn() {
         if (data.success) {
             // Lưu thông tin người dùng vào localStorage
             localStorage.setItem("currentUser", JSON.stringify(data.user));
-
-          console.log("success");
-          
+            console.log("success");
             navigate("/");
         } else {
             alert(data.message); // Xử lý thông báo lỗi
@@ -73,6 +71,7 @@ export default function SignIn() {
         alert("Error logging in with Google");
     }
 };
+
 
   const handleGoogleError = (error) => {
     console.error("Google login error:", error);

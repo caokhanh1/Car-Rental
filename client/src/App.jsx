@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import AdminPrivateRoute from "./components/AdminPrivateRoute";
+import PaymentPage from "./pages/PaymentPage";
 
 export default function App() {
   return (
@@ -33,7 +34,7 @@ export default function App() {
         <Route element={<AdminPrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         </Route>
-
+        <Route path="/payment" element={<PaymentPage/>} />   
         <Route path="/reset" element={<ResetPassword />} />
         <Route path="/register-car" element={<CarRentalRegistration />} />
         <Route path="/booking" element={<Booking />} />
