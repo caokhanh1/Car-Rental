@@ -1,7 +1,35 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import car1 from "../../assets/car1.png";
 
 const BookingPage = () => {
+
+  const [rentalType, setRentalType] = useState("self-drive");
+  const [rentalPeriod, setRentalPeriod] = useState("day");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [deposit, setDeposit] = useState(0);
+
+  const calculatePrice = () => {
+    const rentPerDay = rentalType === "self-drive" ? 500000 : 700000;
+    let days = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
+    if (days < 1) days = 1; 
+    let price = rentPerDay * days;
+
+    if (rentalPeriod === "week") {
+      price *= 7; // Giả sử tính theo tuần
+      price *= 0.9; // Giảm 10% khi thuê theo tuần
+    } else if (rentalPeriod === "month") {
+      price *= 30; // Giả sử tính theo tháng
+      price *= 0.7; // Giảm 30% khi thuê theo tháng
+    }
+
+    const calculatedDeposit = price * 0.3; // Tính tiền đặt cọc 30% của tổng giá trị
+    setTotalPrice(price);
+    setDeposit(calculatedDeposit);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 mt-10 space-y-12">
       {/* Image and Booking Form Section */}
@@ -17,86 +45,118 @@ const BookingPage = () => {
 
         {/* Booking Form */}
         <div className="bg-white p-8 rounded-xl shadow-xl flex-1 lg:max-w-sm border border-gray-200">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Book Now</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Thuê</h2>
           <form className="space-y-6">
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">
-                Full Name
+                Họ tên
               </label>
               <input
                 type="text"
-                placeholder="Write Your Name Here"
+                placeholder="Nhập tên của bạn ở đây"
                 className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">
-                Address
+                Địa chỉ
               </label>
               <input
                 type="text"
-                placeholder="Write Your Address Here"
+                placeholder="Nhập địa chỉ của bạn ở đây"
                 className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
               />
             </div>
             <div className="flex space-x-4">
               <div className="w-1/2">
                 <label className="block text-sm font-medium mb-2 text-gray-700">
-                  Pick-up Date
+                  Ngày nhận xe
                 </label>
                 <input
                   type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 />
               </div>
               <div className="w-1/2">
                 <label className="block text-sm font-medium mb-2 text-gray-700">
-                  Returning Date
+                  Ngày trả xe
                 </label>
                 <input
                   type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
                   className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">
-                Your Message
+                Loại hình thuê
               </label>
-              <textarea
-                placeholder="Write Your Message Here"
+              <select
+                value={rentalType}
+                onChange={(e) => setRentalType(e.target.value)}
                 className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                rows="4"
-              ></textarea>
+              >
+                <option value="self-drive">Tự lái</option>
+                <option value="with-driver">Có tài xế</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                Thời gian thuê
+              </label>
+              <select
+                value={rentalPeriod}
+                onChange={(e) => setRentalPeriod(e.target.value)}
+                className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              >
+                <option value="day">Ngày</option>
+                <option value="week">Tuần</option>
+                <option value="month">Tháng</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              onClick={calculatePrice}
+              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300"
+            >
+              Tính giá
+            </button>
+            <div className="mt-4">
+              <p>Tổng giá: <strong>{totalPrice} VND</strong></p>
+              <p>Tiền đặt cọc: <strong>{deposit} VND</strong></p>
             </div>
             <Link to="/payment">
-            <button className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300">
-              Book Now
-            </button>
+              <button className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300 mt-4">
+                Đặt ngay
+              </button>
             </Link>
-            
           </form>
         </div>
       </div>
 
       {/* Vehicle Overview */}
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold mb-4 text-gray-800">Vehicle Overview</h2>
+        <h2 className="text-3xl font-bold mb-4 text-gray-800">Tổng quan xe</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-sm text-gray-500">Body</p>
+            <p className="text-sm text-gray-500">Thân xe</p>
             <h3 className="text-lg font-semibold">BMW X3</h3>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-sm text-gray-500">Make</p>
+            <p className="text-sm text-gray-500">Hãng xe</p>
             <h3 className="text-lg font-semibold">Nissan</h3>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-sm text-gray-500">Transmission</p>
-            <h3 className="text-lg font-semibold">Automatic</h3>
+            <p className="text-sm text-gray-500">Hộp số</p>
+            <h3 className="text-lg font-semibold">Tự động</h3>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-sm text-gray-500">Fuel Type</p>
+            <p className="text-sm text-gray-500">Loại nhiên liệu</p>
             <h3 className="text-lg font-semibold">Diesel</h3>
           </div>
         </div>
@@ -104,26 +164,19 @@ const BookingPage = () => {
 
       {/* Price Details */}
       <div className="border-t border-gray-300 pt-6">
-        <h2 className="text-3xl font-bold mb-4 text-gray-800">Price Details</h2>
+        <h2 className="text-3xl font-bold mb-4 text-gray-800">Chi tiết giá cả</h2>
         <ul className="space-y-3 text-lg">
-          <li>Rent/Day: <span className="font-semibold">$300</span> (Negotiable)</li>
-          <li>Rent/Month: <span className="font-semibold">$3000</span> (Negotiable)</li>
-          <li>Service Charge: <span className="font-semibold">$50</span> (Service providing)</li>
-          <li>Extra Service: <span className="font-semibold">As per Service Taken</span></li>
-          <li>Security Deposit: <span className="font-semibold">$3000</span></li>
+          <li>Giá thuê/ngày: <span className="font-semibold">500,000 VND (Tự lái) - 700,000 VND (Có tài xế)</span></li>
+          <li>Giá thuê/tháng: <span className="font-semibold">Giảm 30% cho thuê theo tháng</span></li>
+          <li>Tiền đặt cọc: <span className="font-semibold">30% tổng giá thuê</span></li>
         </ul>
       </div>
 
       {/* Terms of Use */}
       <div className="border-t border-gray-300 pt-6">
-        <h2 className="text-3xl font-bold italic mb-4 text-gray-800">Terms of Use</h2>
-        <p className="text-gray-700 leading-7">
-          Quy định khác: - Sử dụng xe đúng mục đích. - Không sử dụng xe thuê vào
-          mục đích phi pháp, trái pháp luật. - Không sử dụng xe thuê để cầm cố,
-          thế chấp. - Không hút thuốc, nhả kẹo cao su, xả rác trong xe. - Không
-          chở hàng quốc cấm dễ cháy nổ. - Không chở hoa quả, thực phẩm nặng mùi
-          trong xe. - Khi trả xe, nếu xe bẩn hoặc có mùi trong xe, khách hàng
-          vui lòng vệ sinh xe sạch sẽ hoặc gửi phụ thu phí vệ sinh xe.
+        <h2 className="text-3xl font-bold mb-4 text-gray-800">Điều khoản sử dụng</h2>
+        <p className="text-lg text-gray-600">
+          Bằng việc tiếp tục đặt xe, bạn đồng ý với các điều khoản và điều kiện của chúng tôi.
         </p>
       </div>
     </div>

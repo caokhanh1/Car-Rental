@@ -62,7 +62,7 @@ export default function SignIn() {
             console.log("success");
             navigate("/");
         } else {
-            alert(data.message); // Xử lý thông báo lỗi
+            alert(data.message); 
         }
     } catch (error) {
         console.error("Google login failed", error);
