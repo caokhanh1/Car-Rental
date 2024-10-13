@@ -1,66 +1,30 @@
-// src/components/CarList.js
-import { useState } from "react";
-import car2 from "../../assets/car2.png";
-import car from "../../assets/car.png";
-import car1 from "../../assets/car1.png";
-import car5 from "../../assets/car5.png";
-import car6 from "../../assets/car6.png";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-const carList = [
-  {
-    name: "BMW UX",
-    price: 100,
-    image: car1,
-    category: "Luxury",
-    aosDelay: "0",
-  },
-  {
-    name: "KIA Sportage",
-    price: 140,
-    image: car2,
-    category: "SUV",
-    aosDelay: "500",
-  },
-  {
-    name: "Toyota Corolla",
-    price: 90,
-    image: car,
-    category: "Sedan",
-    aosDelay: "1000",
-  },
-  {
-    name: "Mercedes-Benz C-Class",
-    price: 200,
-    image: car1,
-    category: "Luxury",
-    aosDelay: "0",
-  },
-  {
-    name: "Honda Civic",
-    price: 85,
-    image: car5,
-    category: "Sedan",
-    aosDelay: "500",
-  },
-  {
-    name: "Ford Transit",
-    price: 120,
-    image: car6,
-    category: "Van",
-    aosDelay: "1000",
-  },
-  // Add more data as needed
-];
 
 const categories = ["All", "Sedan", "SUV", "Luxury", "Convertible", "Hatchback", "Van"];
 
 const CarList = () => {
+  const [cars, setCars] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Lọc dữ liệu dựa trên searchTerm và selectedCategory
-  const filteredData = carList.filter((car) => {
+  // Fetch cars from API
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch("https://localhost:5130/api/cars");
+        const data = await response.json();
+        setCars(data);
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+      }
+    };
+
+    fetchCars();
+  }, []);
+
+
+  const filteredData = cars.filter((car) => {
     const matchesSearch = 
       car.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       car.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -111,7 +75,7 @@ const CarList = () => {
           >
             <div className="w-full h-[120px]">
               <img
-                src={data.image}
+                src={data.imageUrl} // Sử dụng image URL từ API
                 alt={data.name}
                 className="w-full h-[120px] object-contain sm:translate-x-8 group-hover:sm:translate-x-16 duration-700"
               />
@@ -128,7 +92,7 @@ const CarList = () => {
                 </Link>
               </div>
             </div>
-            <p className="text-xl font-semibold absolute top-0 left-3">12Km</p>
+            <p className="text-xl font-semibold absolute top-0 left-3">{data.distance}Km</p>
           </div>
         ))}
         {filteredData.length === 0 && (

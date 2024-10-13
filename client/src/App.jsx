@@ -9,7 +9,6 @@ import Cars from "./pages/Cars";
 import Footer from "./components/Footer";
 import Booking from "./pages/Booking";
 import PrivateRoute from "./components/PrivateRoute";
-import CarRentalRegistration from "./pages/CarRentalRegistration";
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
@@ -36,7 +35,6 @@ export default function App() {
         </Route>
         <Route path="/payment" element={<PaymentPage/>} />   
         <Route path="/reset" element={<ResetPassword />} />
-        <Route path="/register-car" element={<CarRentalRegistration />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/cars" element={<Cars />} />
       </Routes>

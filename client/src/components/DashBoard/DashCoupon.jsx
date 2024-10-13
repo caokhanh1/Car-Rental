@@ -1,17 +1,10 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios"; 
 import { Modal, Button, TextInput, Label } from "flowbite-react";
-import { HiOutlineExclamationCircle, HiPlus } from "react-icons/hi";
-
-const initialCoupons = [
-  { id: 1, code: 'DISCOUNT10', discountAmount: 10, expiryDate: '2024-12-31', status: 'Active' },
-  { id: 2, code: 'SAVE20', discountAmount: 20, expiryDate: '2024-11-30', status: 'Inactive' },
-  { id: 3, code: 'FREESHIP', discountAmount: 0, expiryDate: '2024-10-15', status: 'Active' },
-  // Thêm dữ liệu mẫu khác nếu cần
-];
+import { HiOutlineExclamationCircle, HiPlus } from "react-icons/hi"; 
 
 export default function DashCoupon() {
-  const [coupons, setCoupons] = useState(initialCoupons);
+  const [coupons, setCoupons] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [newCoupon, setNewCoupon] = useState({
@@ -23,7 +16,19 @@ export default function DashCoupon() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [couponIdToDelete, setCouponIdToDelete] = useState("");
 
-  // Lọc dữ liệu dựa trên searchTerm
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await axios.get('/api/coupon');
+        setCoupons(response.data);
+      } catch (error) {
+        console.error("Error fetching coupons:", error);
+      }
+    };
+
+    fetchCoupons();
+  }, []);
+
   const filteredCoupons = coupons.filter(
     (coupon) =>
       coupon.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,7 +37,7 @@ export default function DashCoupon() {
       coupon.expiryDate.includes(searchTerm)
   );
 
-  // Xử lý thay đổi trong form tạo mã giảm giá
+
   const handleChange = (e) => {
     setNewCoupon({
       ...newCoupon,
@@ -40,33 +45,31 @@ export default function DashCoupon() {
     });
   };
 
-  // Xử lý tạo mã giảm giá mới
-  const handleCreateCoupon = () => {
+
+  const handleCreateCoupon = async () => {
     if (!newCoupon.code || !newCoupon.discountAmount || !newCoupon.expiryDate) {
       alert("Vui lòng điền đầy đủ thông tin mã giảm giá.");
       return;
     }
 
-    const newId = coupons.length > 0 ? coupons[coupons.length - 1].id + 1 : 1;
-    const createdCoupon = {
-      id: newId,
-      code: newCoupon.code,
-      discountAmount: parseFloat(newCoupon.discountAmount),
-      expiryDate: newCoupon.expiryDate,
-      status: newCoupon.status,
-    };
-
-    setCoupons([...coupons, createdCoupon]);
-    setNewCoupon({ code: '', discountAmount: '', expiryDate: '', status: 'Active' });
-    setShowModal(false);
+    try {
+      const response = await axios.post('/api/coupon', newCoupon); 
+      setCoupons([...coupons, response.data]); 
+      setNewCoupon({ code: '', discountAmount: '', expiryDate: '', status: 'Active' });
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error creating coupon:", error);
+    }
   };
 
-  // Xử lý xóa mã giảm giá
-  const handleDeleteCoupon = () => {
-    setCoupons((prevCoupons) =>
-      prevCoupons.filter((coupon) => coupon.id !== couponIdToDelete)
-    );
-    setShowDeleteModal(false);
+  const handleDeleteCoupon = async () => {
+    try {
+      await axios.delete(`/api/coupon/${couponIdToDelete}`); 
+      setCoupons((prevCoupons) => prevCoupons.filter((coupon) => coupon.id !== couponIdToDelete));
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting coupon:", error);
+    }
   };
 
   return (
@@ -89,13 +92,20 @@ export default function DashCoupon() {
           </div>
         </div>
 
+        {/* Cảnh báo (nếu cần) */}
+        {coupons.length === 0 && (
+          <div className="flex items-center text-red-600 mb-4">
+            <HiOutlineExclamationCircle className="mr-2" />
+            <span>Không có mã giảm giá nào hiện có.</span>
+          </div>
+        )}
+
         {/* Bảng hiển thị coupons */}
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  {/* Tiêu đề cột */}
                   <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     ID
                   </th>
@@ -117,7 +127,6 @@ export default function DashCoupon() {
                 </tr>
               </thead>
               <tbody>
-                {/* Dòng dữ liệu */}
                 {filteredCoupons.map((coupon) => (
                   <tr key={coupon.id}>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -155,27 +164,11 @@ export default function DashCoupon() {
                       >
                         Delete
                       </button>
-                      {/* Nếu muốn thêm chức năng Edit, bạn có thể thêm nút Edit ở đây */}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
-            {/* Phần phân trang - Tùy chọn */}
-            <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-              <span className="text-xs xs:text-sm text-gray-900">
-                Showing {filteredCoupons.length > 0 ? 1 : 0} to {filteredCoupons.length} of {coupons.length} Entries
-              </span>
-              <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm text-indigo-50 bg-indigo-600 px-4 py-2 rounded-l hover:bg-indigo-700">
-                  Prev
-                </button>
-                <button className="text-sm text-indigo-600 bg-indigo-100 px-4 py-2 hover:bg-indigo-200">
-                  Next
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -218,7 +211,6 @@ export default function DashCoupon() {
               <Label htmlFor="status" value="Status" />
               <select
                 id="status"
-                className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 value={newCoupon.status}
                 onChange={(e) => setNewCoupon({ ...newCoupon, status: e.target.value })}
               >
@@ -229,39 +221,27 @@ export default function DashCoupon() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button color="failure" onClick={() => setShowModal(false)}>
+          <Button onClick={handleCreateCoupon}>Create</Button>
+          <Button onClick={() => setShowModal(false)} color="gray">
             Cancel
-          </Button>
-          <Button onClick={handleCreateCoupon}>
-            Create
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Modal Xác Nhận Xóa */}
-      <Modal
-        show={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        popup
-        size="md"
-      >
-        <Modal.Header />
+      {/* Modal Xóa Mã Giảm Giá */}
+      <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <Modal.Header>Delete Coupon</Modal.Header>
         <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this coupon?
-            </h3>
-            <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeleteCoupon}>
-                Yes, Im sure
-              </Button>
-              <Button color="gray" onClick={() => setShowDeleteModal(false)}>
-                No, cancel
-              </Button>
-            </div>
-          </div>
+          <p>Bạn có chắc chắn muốn xóa mã giảm giá này không?</p>
         </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleDeleteCoupon} color="red">
+            Yes
+          </Button>
+          <Button onClick={() => setShowDeleteModal(false)} color="gray">
+            No
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

@@ -49,17 +49,15 @@ export default function SignIn() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential; 
-
     try {
-        // Gửi token Google lên server để xác thực
+       
         const res = await axios.post("http://localhost:5130/Authen/signin-google", {
-            token,  // Send token to backend
+            token,  
         });
 
         const data = res.data;
 
         if (data.success) {
-            // Lưu thông tin người dùng vào localStorage
             localStorage.setItem("currentUser", JSON.stringify(data.user));
             console.log("success");
             navigate("/");
@@ -115,8 +113,6 @@ export default function SignIn() {
           >
             {loading ? "Loading..." : "Sign In"}
           </button>
-
-          {/* Component Google Login */}
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleError}

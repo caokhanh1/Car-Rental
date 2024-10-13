@@ -2,7 +2,6 @@ import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
 import {
     HiUser,
-    HiArrowSmRight,
     HiDocumentText,
     HiOutlineUserGroup,
     HiAnnotation,
@@ -79,14 +78,7 @@ export default function DashSidebar() {
               </Sidebar.Item>
             </Link>
           </>
-   
-        <Sidebar.Item
-          icon={HiArrowSmRight}
-          className='cursor-pointer'
-         
-        >
-          Sign Out
-        </Sidebar.Item>
+  
       </Sidebar.ItemGroup>
     </Sidebar.Items>
   </Sidebar>

@@ -1,10 +1,9 @@
-// src/components/DashProfile.js
+
 import { useState } from "react";
 import { Modal, Button, TextInput, Label, Avatar } from "flowbite-react";
 import { HiPencil } from "react-icons/hi";
 
 export default function DashProfile() {
-  // Lấy thông tin người dùng từ localStorage
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {
     id: 1,
     fullName: "John Doe",
@@ -23,7 +22,6 @@ export default function DashProfile() {
     status: currentUser.status,
   });
 
-  // Xử lý thay đổi trong các trường input
   const handleChange = (e) => {
     setEditData({
       ...editData,
@@ -31,9 +29,8 @@ export default function DashProfile() {
     });
   };
 
-  // Xử lý lưu thay đổi hồ sơ
+  
   const handleSave = () => {
-    // Cập nhật profileData và localStorage
     const updatedProfile = { ...profileData, ...editData };
     setProfileData(updatedProfile);
     localStorage.setItem("currentUser", JSON.stringify(updatedProfile));
