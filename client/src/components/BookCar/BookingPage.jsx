@@ -1,40 +1,66 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import car1 from "../../assets/car1.png";
+import "flowbite";
 
 const BookingPage = () => {
-
   const [rentalType, setRentalType] = useState("self-drive");
-  const [rentalPeriod, setRentalPeriod] = useState("day");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
   const [deposit, setDeposit] = useState(0);
+  const [isAgreed, setIsAgreed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
+  // Tính toán giá
   const calculatePrice = () => {
     const rentPerDay = rentalType === "self-drive" ? 500000 : 700000;
-    let days = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
-    if (days < 1) days = 1; 
+    let days =
+      (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
+
+    if (days < 1) days = 1;
     let price = rentPerDay * days;
+    const calculatedDeposit = price * 0.3;
 
-    if (rentalPeriod === "week") {
-      price *= 7; // Giả sử tính theo tuần
-      price *= 0.9; // Giảm 10% khi thuê theo tuần
-    } else if (rentalPeriod === "month") {
-      price *= 30; // Giả sử tính theo tháng
-      price *= 0.7; // Giảm 30% khi thuê theo tháng
-    }
-
-    const calculatedDeposit = price * 0.3; // Tính tiền đặt cọc 30% của tổng giá trị
     setTotalPrice(price);
     setDeposit(calculatedDeposit);
   };
 
+  // Xử lý đặt xe
+  const handleBooking = () => {
+    // Kiểm tra điều kiện trước khi tính toán giá
+    if (!isAgreed) {
+      setErrorMessage("*Bạn cần phải đồng ý với điều khoản trước khi đặt xe.");
+      return;
+    }
+    
+    if (!startDate || !endDate) {
+      setErrorMessage("*Vui lòng nhập cả ngày nhận và trả xe.");
+      return;
+    }
+
+    if (new Date(startDate) > new Date(endDate)) {
+      setErrorMessage("*Ngày trả xe phải sau ngày nhận xe.");
+      return;
+    }
+
+    // Tính toán giá trước khi chuyển đến trang thanh toán
+    calculatePrice(); 
+    navigate("/payment", {
+      state: {
+        totalPrice,
+        deposit,
+        startDate,
+        endDate,
+        rentalType,
+      },
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 mt-10 space-y-12">
-      {/* Image and Booking Form Section */}
       <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-8 lg:space-y-0">
-        {/* Car Image */}
         <div className="flex-1">
           <img
             src={car1}
@@ -43,7 +69,6 @@ const BookingPage = () => {
           />
         </div>
 
-        {/* Booking Form */}
         <div className="bg-white p-8 rounded-xl shadow-xl flex-1 lg:max-w-sm border border-gray-200">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Thuê</h2>
           <form className="space-y-6">
@@ -104,41 +129,40 @@ const BookingPage = () => {
                 <option value="with-driver">Có tài xế</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">
-                Thời gian thuê
-              </label>
-              <select
-                value={rentalPeriod}
-                onChange={(e) => setRentalPeriod(e.target.value)}
-                className="w-full border-2 border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-              >
-                <option value="day">Ngày</option>
-                <option value="week">Tuần</option>
-                <option value="month">Tháng</option>
-              </select>
-            </div>
 
             <button
               type="button"
-              onClick={calculatePrice}
-              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300"
+              onClick={handleBooking}
+              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300 mt-4"
             >
-              Tính giá
+              Đặt ngay
             </button>
-            <div className="mt-4">
-              <p>Tổng giá: <strong>{totalPrice} VND</strong></p>
-              <p>Tiền đặt cọc: <strong>{deposit} VND</strong></p>
+
+            {errorMessage && <span className="text-red-600">{errorMessage}</span>}
+            
+            <div className="flex items-center mt-4">
+              <input
+                type="checkbox"
+                checked={isAgreed}
+                onChange={() => setIsAgreed(!isAgreed)}
+                className="mr-2"
+              />
+              <span>
+                Tôi đã đọc và đồng ý với{" "}
+                <a
+                  href="/contract" 
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  các điều khoản
+                </a>
+              </span>
             </div>
-            <Link to="/payment">
-              <button className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-colors duration-300 mt-4">
-                Đặt ngay
-              </button>
-            </Link>
+            <span className="text-red-600">
+              * Vui lòng đọc kĩ điều khoản trước khi thanh toán
+            </span>
           </form>
         </div>
       </div>
-
       {/* Vehicle Overview */}
       <div className="space-y-6">
         <h2 className="text-3xl font-bold mb-4 text-gray-800">Tổng quan xe</h2>
@@ -156,12 +180,11 @@ const BookingPage = () => {
             <h3 className="text-lg font-semibold">Tự động</h3>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-sm text-gray-500">Loại nhiên liệu</p>
-            <h3 className="text-lg font-semibold">Diesel</h3>
+            <p className="text-sm text-gray-500">Loại động cơ</p>
+            <h3 className="text-lg font-semibold">Xăng</h3>
           </div>
         </div>
       </div>
-
       {/* Price Details */}
       <div className="border-t border-gray-300 pt-6">
         <h2 className="text-3xl font-bold mb-4 text-gray-800">Chi tiết giá cả</h2>
