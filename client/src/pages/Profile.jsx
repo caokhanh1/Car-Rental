@@ -36,7 +36,6 @@ export default function Profile() {
         }
       );
 
-      // Cập nhật avatar sau khi upload thành công
       if (data.success) {
         const updatedUser = { ...currentUser, avatar: data.avatar };
         localStorage.setItem("currentUser", JSON.stringify(updatedUser));

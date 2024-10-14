@@ -83,7 +83,7 @@ export default function SignIn() {
         {error && <p className="text-red-500 mt-5">{error}</p>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <Label value='Your email' />
+            <Label value='Email' />
             <TextInput
               type='email'
               placeholder='name@gmail.com'
@@ -92,7 +92,7 @@ export default function SignIn() {
             />
           </div>
           <div>
-            <Label value='Your password' />
+            <Label value='Password' />
             <TextInput
               type='password'
               placeholder='**********'
@@ -103,7 +103,7 @@ export default function SignIn() {
 
           <div className="text-right mt-1">
             <Link to="/forgot-password" className="text-blue-700 hover:underline">
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
 
@@ -111,7 +111,7 @@ export default function SignIn() {
             disabled={loading}
             className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           >
-            {loading ? "Loading..." : "Sign In"}
+            {loading ? "Loading..." : "Đăng nhập"}
           </button>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
@@ -122,7 +122,7 @@ export default function SignIn() {
         <div className="flex gap-2 mt-5">
           <p>Do not have an account?</p>
           <Link to="/sign-up">
-            <span className="text-blue-700">Sign up</span>
+            <span className="text-blue-700">Đăng kí</span>
           </Link>
         </div>
       </div>
