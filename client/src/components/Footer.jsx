@@ -8,15 +8,15 @@ import {
 
 const FooterLinks = [
   {
-    title: "Home",
+    title: "Trang chủ",
     link: "/#",
   },
   {
-    title: "About",
+    title: "Giới thiệu",
     link: "/#about",
   },
   {
-    title: "Contact",
+    title: "Liên hệ",
     link: "/#contact",
   },
   {
@@ -30,25 +30,24 @@ const Footer = () => {
     <div className="bg-gray-200 dark:bg-dark mt-14 rounded-t-3xl">
       <section className="container">
         <div className="grid md:grid-cols-3 py-5">
-          {/* Company Details */}
+          {/* Thông tin công ty */}
           <div className="py-8 px-4">
             <h1 className="sm:text-3xl text-xl font-bold sm:text-left text-justify mb-3 flex items-center gap-3 font-serif">
-              Car Rental
+              Thuê xe hơi
             </h1>
             <p className="text-sm">
-              Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Possimus, voluptate.
+              Chúng tôi cung cấp dịch vụ thuê xe uy tín và chất lượng. Với đội ngũ chuyên nghiệp và xe hiện đại, chúng tôi cam kết đem đến cho bạn trải nghiệm tốt nhất.
             </p>
             <br />
             <div className="flex items-center gap-3">
               <FaLocationArrow />
-              <p>Noida, Uttar Pradesh</p>
+              <p>Đà Nẵng, Việt Nam</p>
             </div>
             <div className="flex items-center gap-3 mt-3">
               <FaMobileAlt />
-              <p>+91 123456789</p>
+              <p>+84 123456789</p>
             </div>
-            {/* Social Handle */}
+            {/* Mạng xã hội */}
             <div className="flex items-center gap-3 mt-6">
               <a href="#">
                 <FaInstagram className="text-3xl hover:text-primary duration-300" />
@@ -61,11 +60,11 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          {/* Links */}
+          {/* Liên kết */}
           <div className="grid grid-cols-2 sm:grid-cols-3 col-span-2 md:pl-10">
             <div className="py-8 px-4">
               <h1 className="sm:text-xl font-bold sm:text-left text-justify mb-3">
-                Important Links
+                Liên kết quan trọng
               </h1>
               <ul className="flex flex-col gap-3">
                 {FooterLinks.map((link, index) => (
@@ -83,7 +82,7 @@ const Footer = () => {
             </div>
             <div className="py-8 px-4">
               <h1 className="sm:text-xl font-bold sm:text-left text-justify mb-3">
-                Links
+                Các liên kết khác
               </h1>
               <ul className="flex flex-col gap-3">
                 {FooterLinks.map((link, index) => (
@@ -101,7 +100,7 @@ const Footer = () => {
             </div>
             <div className="py-8 px-4">
               <h1 className="sm:text-xl font-bold sm:text-left text-justify mb-3">
-                Location
+                Địa chỉ
               </h1>
               <ul className="flex flex-col gap-3">
                 {FooterLinks.map((link, index) => (

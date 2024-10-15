@@ -35,7 +35,7 @@ const CarList = () => {
   return (
     <div className="container mx-auto py-12">
       <h1 className="text-3xl sm:text-4xl font-bold font-serif text-center mb-8">
-        Car Rental
+        Danh sách xe
       </h1>
 
       {/* Categories */}
@@ -75,7 +75,7 @@ const CarList = () => {
           >
             <div className="w-full h-[120px]">
               <img
-                src={data.imageUrl} // Sử dụng image URL từ API
+                src={data.imageUrl} 
                 alt={data.name}
                 className="w-full h-[120px] object-contain sm:translate-x-8 group-hover:sm:translate-x-16 duration-700"
               />
@@ -87,7 +87,7 @@ const CarList = () => {
                 <p>${data.price}/Day</p>
                 <Link to="/booking">
                   <button className="border border-yellow-700 text-black py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
-                    Rent Now
+                    Thuê
                   </button>
                 </Link>
               </div>

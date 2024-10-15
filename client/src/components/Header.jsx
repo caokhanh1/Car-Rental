@@ -23,8 +23,8 @@ export default function Header() {
         className="self-center text-sm sm:text-xl font-semibold dark:text-white"
       >
         <div className="text-2xl flex items-center gap-2 font-bold font-averia uppercase">
-          <span className="text-slate-500">Car</span>
-          <span className="text-slate-700">Rental</span>
+          <span className="text-slate-500">Thuê</span>
+          <span className="text-slate-700">Xe</span>
           <FaCarCrash className="text-yellow-500" />
         </div>
       </Link>
@@ -32,7 +32,7 @@ export default function Header() {
       <form>
         <TextInput
           type="text"
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           rightIcon={AiOutlineSearch}
           className="hidden lg:inline"
         />
@@ -60,33 +60,33 @@ export default function Header() {
             {/* Phân quyền Dashboard cho admin */}
             {currentUser.role === "admin" ? (
               <Link to={'/dashboard?tab=dash'}>
-                <Dropdown.Item>DashBoard</Dropdown.Item>
+                <Dropdown.Item>Bảng điều khiển</Dropdown.Item>
               </Link>
             ) : (
               <Link to={'/profile'}>
-                <Dropdown.Item>Profile</Dropdown.Item>
+                <Dropdown.Item>Hồ sơ</Dropdown.Item>
               </Link>
             )}
 
             <Dropdown.Divider />
-            <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
+            <Dropdown.Item onClick={handleSignout}>Đăng xuất</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to='/sign-in'>
-            <Button gradientDuoTone="pinkToOrange">Sign In</Button>
+            <Button gradientDuoTone="pinkToOrange">Đăng nhập</Button>
           </Link>
         )}
       </div>
 
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>
-          <Link to="/">Home</Link>
+          <Link to="/">Trang chủ</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/about"} as={"div"}>
-          <Link to="/about">About us</Link>
+          <Link to="/about">Giới thiệu</Link>
         </Navbar.Link>
         <Navbar.Link active={path === "/cars"} as={"div"}>
-          <Link to="/cars">Car</Link>
+          <Link to="/cars">Xe</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
