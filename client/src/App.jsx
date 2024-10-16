@@ -7,7 +7,6 @@ import Profile from "./pages/Profile";
 import Header from "./components/Header";
 import Cars from "./pages/Cars";
 import Footer from "./components/Footer";
-import Booking from "./pages/Booking";
 import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -15,6 +14,7 @@ import ResetPassword from "./components/ResetPassword";
 import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import PaymentPage from "./pages/PaymentPage";
 import ContractTerms from "./components/BookCar/Contract";
+import BookingPage from "./pages/BookingPage";
 
 export default function App() {
   return (
@@ -36,7 +36,7 @@ export default function App() {
         </Route>
         <Route path="/payment" element={<PaymentPage/>} />   
         <Route path="/reset" element={<ResetPassword />} />
-        <Route path="/booking" element={<Booking />} />
+        <Route path="/booking" element={<BookingPage />} />
         <Route path="/cars" element={<Cars />} />
         <Route path="/contract" element={<ContractTerms />} />
       </Routes>

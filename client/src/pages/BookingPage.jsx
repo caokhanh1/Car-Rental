@@ -1,15 +1,15 @@
-import BookingPage from "../components/BookCar/BookingPage"
+import Booking from "../components/BookCar/Booking"
 import CommentsSection from "../components/BookCar/CommentsSection"
 
 
-const Booking = () => {
+const BookingPage = () => {
   return (
     <div>
-      <BookingPage />
+      <Booking />
       <CommentsSection/>
     </div>
   )
 }
 
-export default Booking
+export default BookingPage
 
