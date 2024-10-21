@@ -1,3 +1,4 @@
+import  logo  from "../assets/logo1.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaCarCrash } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -26,6 +27,7 @@ export default function Header() {
           <span className="text-slate-500">Thuê</span>
           <span className="text-slate-700">Xe</span>
           <FaCarCrash className="text-yellow-500" />
+          <img src={logo} alt="" className="h-10 w-10"/>
         </div>
       </Link>
 

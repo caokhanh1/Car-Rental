@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Label, TextInput } from "flowbite-react";
 
-export default function Signup() {
+export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imageUploaded, setImageUploaded] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -16,12 +18,55 @@ export default function Signup() {
     });
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileFormData = new FormData();
+    fileFormData.append("file", file);
+    fileFormData.append(
+      "upload_preset",
+      import.meta.env.VITE_APP_CLOUDINARY_UPLOAD_PRESET
+    );
+    fileFormData.append(
+      "cloud_name",
+      import.meta.env.VITE_APP_CLOUDINARY_CLOUD_NAME
+    );
+    fileFormData.append("folder", "Cloudinary-React");
+
+    try {
+      setUploading(true);
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_APP_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
+        fileFormData
+      );
+      const imageUrl = res.data.secure_url;
+      setFormData((prev) => ({
+        ...prev,
+        drivingLicense: imageUrl,
+      }));
+      setImageUploaded(true);
+      setError(null);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to upload image. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!imageUploaded) {
+      setError("Please upload your driver's license before signing up.");
+      return;
+    }
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:5130/Authen/register`,
+        `${import.meta.env.VITE_APP_API_URL}/auths/sign-up`,
         formData,
         {
           headers: {
@@ -29,8 +74,6 @@ export default function Signup() {
           },
         }
       );
-
-      console.log(res.data);
       if (res.data.success === false) {
         setError(res.data.message);
       } else {
@@ -41,6 +84,7 @@ export default function Signup() {
         });
       }
     } catch (error) {
+      console.log(error);
       setError(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
@@ -72,20 +116,11 @@ export default function Signup() {
         </div>
 
         <div>
-          <Label value="Full Name" />
+          <Label value="Username" />
           <TextInput
             type="text"
-            placeholder="Full Name"
-            id="fullName"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label value="Address" />
-          <TextInput
-            type="text"
-            placeholder="Address"
-            id="address"
+            placeholder="Username"
+            id="username"
             onChange={handleChange}
           />
         </div>
@@ -98,17 +133,36 @@ export default function Signup() {
             onChange={handleChange}
           />
         </div>
+
+        <div>
+          <Label value="Upload Driver's License" />
+          <input
+            type="file"
+            id="drivingLicense"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="block w-full text-sm text-gray-500
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-full file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-violet-50 file:text-violet-700
+                     hover:file:bg-violet-100"
+          />
+        </div>
+
+        {uploading && <p className="text-blue-500 mt-2">Uploading image...</p>}
+
         <button
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {loading ? "Loading..." : "Đăng kí"}
+          {loading ? "Loading..." : "Sign Up"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
-        <p>Bạn đã có tài khoản ?</p>
+        <p>Have an account?</p>
         <Link to="/sign-in">
-          <span className="text-blue-700">Đăng nhập</span>
+          <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
     </div>
