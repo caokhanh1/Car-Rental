@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, TextInput, Label } from "flowbite-react";
 import { HiOutlineExclamationCircle, HiPencil, HiTrash } from "react-icons/hi";
+
 import axios from "axios";
 
 export default function DashUsers() {
@@ -12,24 +13,84 @@ export default function DashUsers() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (!user || !user.token) {
+    console.error("No user token found");
+  }
 
   useEffect(() => {
-    axios
-      .get("/api/users")
-      .then((response) => setUsers(response.data))
-      .catch((error) => console.error("Error fetching users:", error));
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}/users`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+
+    return () => {};
   }, []);
 
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.username.includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.status.toLowerCase().includes(searchTerm.toLowerCase())
+      user.role.toString().includes(searchTerm.toLowerCase())
   );
+
+  const handleViewImage = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowModal(true);
+  };
+
+  const handleToggleStatus = (userId) => {
+    const updatedUsers = users.map((user) => {
+      if (user.id === userId) {
+        return { ...user, isActive: !user.isActive };
+      }
+      return user;
+    });
+
+    setUsers(updatedUsers);
+
+    const userToUpdate = updatedUsers.find((user) => user.id === userId);
+    axios
+      .put(
+        `${import.meta.env.VITE_APP_API_URL}/users/${userId}/active`,
+        {
+          isActive: userToUpdate.isActive,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("User status updated successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating user status:", error);
+      });
+  };
 
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
@@ -44,9 +105,52 @@ export default function DashUsers() {
     setShowEditModal(true);
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    const fileFormData = new FormData();
+    fileFormData.append("file", file);
+    fileFormData.append(
+      "upload_preset",
+      import.meta.env.VITE_APP_CLOUDINARY_UPLOAD_PRESET
+    );
+    fileFormData.append(
+      "cloud_name",
+      import.meta.env.VITE_APP_CLOUDINARY_CLOUD_NAME
+    );
+    fileFormData.append("folder", "Cloudinary-React");
+
+    try {
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_APP_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
+        fileFormData
+      );
+      const imageUrl = res.data.secure_url;
+      setUploading(false);
+      setCurrentUser({ ...currentUser, drivingLicense: imageUrl });
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+      setUploading(false);
+    }
+  };
+
   const handleSaveEdit = () => {
     axios
-      .put(`/api/users/${currentUser.id}`, currentUser)
+      .put(
+        `${import.meta.env.VITE_APP_API_URL}/users/${currentUser.id}`,
+        currentUser,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      )
       .then(() => {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -65,7 +169,12 @@ export default function DashUsers() {
 
   const confirmDelete = () => {
     axios
-      .delete(`/api/users/${userIdToDelete}`)
+      .delete(`${import.meta.env.VITE_APP_API_URL}/users/${userIdToDelete}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
       .then(() => {
         setUsers((prevUsers) =>
           prevUsers.filter((user) => user.id !== userIdToDelete)
@@ -101,26 +210,31 @@ export default function DashUsers() {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     ID
                   </th>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     Name
                   </th>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
-                  >
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     Email
                   </th>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
-                  >
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                    Phone
+                  </th>
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     Role
                   </th>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
-                  >
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
                     Status
                   </th>
-                  <th scope="col" className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal"
-                  >
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal">
+                    Verify
+                  </th>
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-center text-sm uppercase font-normal">
+                    Driving License
+                  </th>
+                  <th className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-center text-sm uppercase font-normal">
                     Actions
                   </th>
                 </tr>
@@ -128,14 +242,14 @@ export default function DashUsers() {
               <tbody>
                 {currentUsers.map((user) => (
                   <tr key={user.id}>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                       <p className="text-gray-900 whitespace-no-wrap">
                         {user.id}
                       </p>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">
-                        {user.name}
+                        {user.username}
                       </p>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -144,6 +258,11 @@ export default function DashUsers() {
                       </p>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {user.phone}
+                      </p>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                       <span
                         className={`relative inline-block px-3 py-1 font-semibold text-${
                           user.role === "Administrator"
@@ -166,43 +285,97 @@ export default function DashUsers() {
                         <span className="relative">{user.role}</span>
                       </span>
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {user.status === "Active" ? (
-                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                          <span
-                            aria-hidden="true"
-                            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">{user.status}</span>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                      <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={user.isActive}
+                          onChange={() => handleToggleStatus(user.id)}
+                          className="sr-only peer"
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        <span
+                          className={`ml-3 text-sm font-medium ${
+                            user.isActive ? "text-gray-900" : "text-gray-300"
+                          } dark:text-gray-300`}
+                        ></span>
+                      </label>
+                    </td>
+                    {/* Cột Verify */}
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                      <span
+                        className={`relative inline-block px-3 py-1 font-semibold text-${
+                          user.isVerify ? "green" : "red"
+                        }-900 leading-tight`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`absolute inset-0 bg-${
+                            user.isVerify ? "green" : "red"
+                          }-200 opacity-50 rounded-full`}
+                        ></span>
+                        <span className="relative">
+                          {user.isVerify ? "Verified" : "Not Verified"}
                         </span>
+                      </span>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                      {user.drivingLicense ? (
+                        <button
+                          onClick={() => handleViewImage(user.drivingLicense)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          View
+                        </button>
                       ) : (
-                        <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
-                          <span
-                            aria-hidden="true"
-                            className="absolute inset-0 bg-red-200 opacity-50 rounded-full"
-                          ></span>
-                          <span className="relative">{user.status}</span>
-                        </span>
+                        <p className="text-gray-500">No Image</p>
                       )}
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(user)}
-                        className="text-indigo-600 hover:text-indigo-900 flex items-center"
-                      >
-                        <HiPencil className="mr-1" /> Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="text-red-600 hover:text-red-900 flex items-center"
-                      >
-                        <HiTrash className="mr-1" /> Delete
-                      </button>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                      <div className="flex justify-center items-center space-x-2">
+                        <button
+                          onClick={() => handleEdit(user)}
+                          className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                        >
+                          <HiPencil className="mr-1" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="text-red-600 hover:text-red-900 flex items-center"
+                        >
+                          <HiTrash className="mr-1" /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            {showModal && (
+              <Modal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                size="lg"
+              >
+                <Modal.Body>
+                  <div className="flex justify-center">
+                    <img
+                      src={selectedImage}
+                      alt="Driving License"
+                      className="w-auto h-auto max-w-full max-h-[80vh] rounded-lg"
+                    />
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  >
+                    Close
+                  </button>
+                </Modal.Footer>
+              </Modal>
+            )}
             {/* Pagination */}
             <div className="px-5 py-5 bg-white border-t flex flex-col sm:flex-row items-center sm:justify-between">
               <span className="text-xs sm:text-sm text-gray-900">
@@ -229,7 +402,6 @@ export default function DashUsers() {
           </div>
         </div>
       </div>
-
       {/* Edit Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onClose={() => setShowEditModal(false)}>
@@ -241,10 +413,23 @@ export default function DashUsers() {
                 <TextInput
                   id="name"
                   type="text"
-                  value={currentUser.name}
+                  value={currentUser.username}
                   onChange={(e) =>
-                    setCurrentUser({ ...currentUser, name: e.target.value })
+                    setCurrentUser({ ...currentUser, username: e.target.value })
                   }
+                  className="mt-1 w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone" value="Phone" />
+                <TextInput
+                  id="phone"
+                  type="text"
+                  value={currentUser.phone}
+                  onChange={(e) =>
+                    setCurrentUser({ ...currentUser, phone: e.target.value })
+                  }
+                  className="mt-1 w-full"
                 />
               </div>
               <div>
@@ -253,9 +438,8 @@ export default function DashUsers() {
                   id="email"
                   type="email"
                   value={currentUser.email}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, email: e.target.value })
-                  }
+                  disabled
+                  className="mt-1 w-full"
                 />
               </div>
               <div>
@@ -264,21 +448,24 @@ export default function DashUsers() {
                   id="role"
                   type="text"
                   value={currentUser.role}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, role: e.target.value })
-                  }
+                  disabled
+                  className="mt-1 w-full"
                 />
               </div>
               <div>
-                <Label htmlFor="status" value="Status" />
-                <TextInput
-                  id="status"
-                  type="text"
-                  value={currentUser.status}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, status: e.target.value })
-                  }
-                />
+                <Label value="Upload Driver's License" />
+                <div className="mt-2 flex items-center">
+                  <input
+                    type="file"
+                    id="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="block text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 cursor-pointer"
+                  />
+                </div>
+                {uploading && (
+                  <p className="text-blue-500 mt-2">Uploading image...</p>
+                )}
               </div>
             </div>
           </Modal.Body>
@@ -290,7 +477,6 @@ export default function DashUsers() {
           </Modal.Footer>
         </Modal>
       )}
-
       {/* Delete Modal */}
       {showDeleteModal && (
         <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
